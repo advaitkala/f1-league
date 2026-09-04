@@ -1,0 +1,29 @@
+[project]
+name = "f1-league"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Advait Kaladharan", email = "advaitkaladharan@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "dj-database-url>=3.1.2",
+    "django>=6.1.1",
+    "django-environ>=0.14.0",
+    "gunicorn>=26.2.0",
+    "psycopg[binary]>=3.3.5",
+    "requests>=2.34.2",
+    "whitenoise>=6.12.0",
+]
+
+[project.scripts]
+f1-league = "f1_league:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-django>=4.14.0",
+    "ruff>=0.16.6",
+]
+
