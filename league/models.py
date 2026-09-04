@@ -11,17 +11,14 @@ class Driver(models.Model):
     full_name = models.CharField(max_length=200)
     name_acronym = models.CharField(max_length=4)
     driver_number = models.IntegerField()
-    driver_team = models.CharField(max_length=200)
-    headshot_url = models.URLField()
-    team_colour = models.CharField(max_length=20)
+    headshot_url = models.URLField(null=True, blank=True)
+    
     
     def __str__(self):
         return self.full_name
     
 class Race(models.Model):
     country_name = models.CharField(max_length=200)
-    circuit_name = models.CharField(max_length=200)
-    flag_url = models.URLField()
     session_key = models.IntegerField()
     meeting_key = models.IntegerField()
     circuit_short_name = models.CharField(max_length=20)
@@ -39,29 +36,41 @@ class Race(models.Model):
         return f"{self.circuit_short_name}, {self.date_start.year}"
         
 class Result(models.Model):
-    meeting_key = models.ForeignKey(Race, on_delete=models.CASCADE)
-    driver_name = models.ForeignKey(Driver, on_delete=models.PROTECT)
+    race = models.ForeignKey(Race, on_delete=models.CASCADE)
+    driver = models.ForeignKey(Driver, on_delete=models.PROTECT)
     position = models.IntegerField()
     dnf = models.BooleanField(default=False)
     dns = models.BooleanField(default=False)
     dsq = models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.full_name
-    
+
 class Prediction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
     p1 = models.ForeignKey(Driver, on_delete=models.PROTECT, related_name="p1_picks")
     p2 = models.ForeignKey(Driver, on_delete=models.PROTECT, related_name="p2_picks")
     p3 = models.ForeignKey(Driver, on_delete=models.PROTECT, related_name="p3_picks")
-    final_score = models.IntegerField(null=True)
+    final_score = models.IntegerField(null=True, blank=True)
     submission_datetime = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["user", "race"], name="one_prediction_per_race")
         ]
+        
+class RaceEntry(models.Model):
+    race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    team_colour = models.CharField(max_length=20)
+    driver_team = models.CharField(max_length=200)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["race", "driver"], name="one_driver_per_race")
+        ]    
+    
+    def __str__(self):
+        return self.driver.full_name
     
     
     
