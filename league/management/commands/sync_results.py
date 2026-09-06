@@ -8,14 +8,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         race = Race.objects.filter(date_end__lt=timezone.now()).order_by("-date_end").first()
         if race is None:
-            raise CommandError("No previous race") 
+            self.stdout.write("No previous race.")
+            return
                
         with httpx.Client() as client:            
             params = {"session_key": race.session_key }
             response = client.get("https://api.openf1.org/v1/session_result", params=params)
             
             if response.status_code == 401:
-                raise CommandError("Live F1 Session ongoing. Please retry 30 minutes after end of session")  
+                self.stdout.write("Live session in progress. Results not available yet.")
+                return
             
             for data in response.json():
                 driver = Driver.objects.filter(driver_number=data["driver_number"]).first()

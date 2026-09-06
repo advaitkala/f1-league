@@ -1,18 +1,19 @@
 import httpx
-from league.models import Race, Driver, Result, Prediction, RaceEntry
-from django.core.management.base import BaseCommand, CommandError
+from league.models import Race, Driver, RaceEntry
+from django.core.management.base import BaseCommand
 from datetime import datetime
 from django.utils import timezone
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        with httpx.Client() as client:            
+        with httpx.Client(timeout=30) as client:            
             params = {"year": 2026, "session_name":'Race'}
             response = client.get("https://api.openf1.org/v1/sessions", params=params)
             
             if response.status_code == 401:
-                raise CommandError("Live F1 Session ongoing. Please retry 30 minutes after end of session")
+                self.stdout.write("Live session in progress, skipping.")
+                return
 
             for data in response.json():
                 Race.objects.update_or_create(
@@ -28,12 +29,14 @@ class Command(BaseCommand):
                         
                     }
                 )
+            self.stdout.write(self.style.SUCCESS("Races synced."))
                 
                 
             next_race = Race.objects.filter(date_start__gt=timezone.now()).order_by("date_start").first()
             
             if next_race is None:
-                raise CommandError("End of season. No upcoming sessions.")
+                self.stdout.write("No upcoming race.")
+                return
             
             params = {"meeting_key": next_race.meeting_key, "session_name":'Practice 2'}
             response = client.get("https://api.openf1.org/v1/sessions", params=params)
@@ -42,6 +45,10 @@ class Command(BaseCommand):
             if not sessions:
                 params = {"meeting_key": next_race.meeting_key, "session_name":'Sprint'}
                 response = client.get("https://api.openf1.org/v1/sessions", params=params)
+                sessions = response.json()
+            
+            if not sessions:
+                self.stdout.write("No lineup session found.")
                 
             fp2_session_key = response.json()[0]["session_key"]
             

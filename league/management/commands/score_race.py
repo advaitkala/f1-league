@@ -10,11 +10,13 @@ class Command(BaseCommand):
         race = Race.objects.filter(date_end__lt=timezone.now()).order_by("-date_end").first()
         
         if race.results_fetched is False:
-            raise CommandError("No results found") 
+            self.stdout.write("Results not synced yet.")
+            return 
         
         result = Result.objects.filter(race=race).order_by("position")[:3]
         if len(result) < 3:
-            raise CommandError("Error")      
+            self.stdout.write("Fewer than three finishers.")
+            return    
         
         actuals = []
         for r in result:
