@@ -19,6 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR / ".env")
 
+LOGIN_REDIRECT_URL = "race_list"
+LOGOUT_REDIRECT_URL = "race_list"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
