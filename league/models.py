@@ -30,7 +30,7 @@ class Race(models.Model):
     
     @property
     def lock_time(self):
-        return self.date_start - timedelta(hours=2)
+        return self.date_start - timedelta(hours=1)
 
     def __str__(self):
         return f"{self.circuit_short_name}, {self.date_start.year}"
