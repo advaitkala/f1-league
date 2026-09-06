@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Predict {{ race }}{% endblock %}
+
+{% block content %}
+  <h1>Make your prediction</h1>
+  <p class="sub">{{ race }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="errors">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="picks">
+      {% for field in form %}
+        <label class="pick">
+          <span class="pos">{{ field.label }}</span>
+          {{ field }}
+          {% if field.errors %}
+            <span class="field-error">{{ field.errors.0 }}</span>
+          {% endif %}
+        </label>
+      {% endfor %}
+    </div>
+
+    <p class="deadline">Locks {{ race.lock_time }}</p>
+
+    <button type="submit">Save prediction</button>
+  </form>
+{% endblock %}
+
+{% block extra_css %}
+.picks {
+  border-top: 1px solid var(--line);
+}
+.pick {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.pick .pos {
+  color: var(--dim);
+  font-size: 0.8rem;
+  min-width: 2.5rem;
+  text-transform: uppercase;
+}
+.pick select {
+  flex: 1;
+  background: #17171a;
+  color: var(--fg);
+  border: 1px solid var(--line);
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.pick select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.field-error {
+  position: absolute;
+  bottom: -0.1rem;
+  left: 3.75rem;
+  color: var(--accent);
+  font-size: 0.7rem;
+}
+.errors {
+  border: 1px solid var(--accent);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.errors p {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+.deadline {
+  color: var(--dim);
+  font-size: 0.75rem;
+  margin: 1.25rem 0 0;
+}
+{% endblock %}

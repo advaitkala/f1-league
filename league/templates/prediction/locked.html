@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Predictions closed{% endblock %}
+
+{% block content %}
+  <h1>Predictions closed</h1>
+  <p class="sub">{{ race }}</p>
+
+  <p class="note">Predictions for this race locked at {{ race.lock_time }}.</p>
+
+  <p><a class="link" href="{% url 'my_prediction' race.id %}">View your prediction</a></p>
+{% endblock %}
+
+{% block extra_css %}
+.note { color: var(--dim); font-size: 0.85rem; }
+.link { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+{% endblock %}

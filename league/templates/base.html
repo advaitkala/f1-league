@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}F1 League{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #0f0f11;
+            --fg: #e8e8ea;
+            --dim: #6f6f78;
+            --line: #26262b;
+            --accent: #e10600;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 3rem 1.5rem 4rem;
+            background: var(--bg);
+            color: var(--fg);
+            font: 16px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        }
+
+        main {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        header {
+            max-width: 640px;
+            margin: 0 auto 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        header .brand {
+            font-size: 0.8rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--fg);
+            text-decoration: none;
+        }
+
+        header nav {
+            display: flex;
+            gap: 1.25rem;
+            align-items: baseline;
+        }
+
+        header nav a,
+        header nav button {
+            color: var(--dim);
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            background: none;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        header nav a:hover,
+        header nav button:hover {
+            color: var(--accent);
+        }
+
+        h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin: 0 0 0.25rem;
+        }
+
+        .sub {
+            color: var(--dim);
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            margin: 0 0 2.5rem;
+        }
+
+        ul,
+        ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        button[type="submit"] {
+            margin-top: 1.5rem;
+            padding: 0.7rem 1.5rem;
+            background: var(--accent);
+            color: #fff;
+            border: 0;
+            font-family: inherit;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+            {% block extra_css %}
+
+            {% endblock %}
+    </style>
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="{% url 'race_list' %}">F1 Prediction League</a>
+        <nav>
+            <a href="{% url 'race_list' %}">Races</a>
+            {% if user.is_authenticated %}
+            <span style="color:var(--dim);font-size:0.75rem">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}" style="display:inline">
+                {% csrf_token %}
+                <button type="submit"
+                    style="margin:0;background:none;color:var(--dim);padding:0;text-transform:none;letter-spacing:0.08em">Log
+                    out</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            <a href="{% url 'signup' %}">Sign up</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>

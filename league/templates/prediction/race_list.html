@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Races</h1>
+<p class="sub">2026 Season</p>
+<ul>
+    {% for race in all_races_list %}
+    <li><a href="{% url 'predict' race.id %}">{{ race }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+{% block extra_css %}
+li { border-bottom: 1px solid var(--line); }
+li:first-child { border-top: 1px solid var(--line); }
+li a { display: block; padding: 0.9rem 0.25rem; color: var(--fg); text-decoration: none; }
+li a:hover { background: #17171a; }
+{% endblock %}

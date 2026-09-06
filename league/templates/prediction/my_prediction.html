@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Your prediction{% endblock %}
+
+{% block content %}
+  <h1>Your prediction</h1>
+  <p class="sub">{{ race }}</p>
+
+  {% if prediction %}
+    <ol>
+      <li>{{ prediction.p1.full_name }}</li>
+      <li>{{ prediction.p2.full_name }}</li>
+      <li>{{ prediction.p3.full_name }}</li>
+    </ol>
+
+    {% if prediction.final_score is not None %}
+      <p class="score"><strong>{{ prediction.final_score }}</strong><span>POINTS</span></p>
+    {% else %}
+      <p class="pending">Awaiting race result.</p>
+    {% endif %}
+  {% else %}
+    <p class="empty">You haven't predicted this race yet.</p>
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+ol { counter-reset: pos; }
+ol li {
+  counter-increment: pos;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.9rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+}
+ol li:first-child { border-top: 1px solid var(--line); }
+ol li::before {
+  content: "P" counter(pos);
+  color: var(--dim);
+  font-size: 0.8rem;
+  min-width: 2rem;
+}
+.score { margin: 2.5rem 0 0; padding: 1.25rem; border: 1px solid var(--line); text-align: center; }
+.score strong { display: block; font-size: 2rem; color: var(--accent); margin-bottom: 0.25rem; }
+.score span { color: var(--dim); font-size: 0.75rem; letter-spacing: 0.12em; }
+.pending { color: var(--dim); font-size: 0.85rem; margin-top: 2.5rem; }
+.empty { color: var(--dim); }
+{% endblock %}
