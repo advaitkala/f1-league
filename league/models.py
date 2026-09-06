@@ -42,6 +42,9 @@ class Result(models.Model):
     dnf = models.BooleanField(default=False)
     dns = models.BooleanField(default=False)
     dsq = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.position}, {self.driver.full_name}"
 
 
 class Prediction(models.Model):
@@ -57,6 +60,9 @@ class Prediction(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["user", "race"], name="one_prediction_per_race")
         ]
+        
+    def __str__(self):
+        return f"{self.race.session_key}, {self.user}"
         
 class RaceEntry(models.Model):
     race = models.ForeignKey(Race, on_delete=models.CASCADE, related_name='entries')
